@@ -1,0 +1,33 @@
+#######################################
+# Build folder
+#######################################
+build
+
+#######################################
+# CMake
+#######################################
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Makefile
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+Testing
+
+
+#######################################
+# C++
+#######################################
+*.so
+*.o
+
+
+#######################################
+# Python
+#######################################
+*.pyc
+
+
+# Sublime Text
+VulkanPractice.sublime-workspace
