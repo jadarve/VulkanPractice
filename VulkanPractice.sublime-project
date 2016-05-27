@@ -1,0 +1,26 @@
+{
+    "folders" : [
+        {
+            "path" : ".",
+            "folder_exclude_patterns" : [
+                // BUild folders
+                "build",
+
+                // CMake folders
+                "CMakeFiles",
+                "Testing"
+            ],
+            "file_exclude_patterns" : [
+                // CMake files
+                "CMakeCache.txt",
+                "*.cmake"
+            ]
+        }
+    ],
+    "settings" : {
+
+    },
+    "build_systems" : [
+
+    ]
+}
