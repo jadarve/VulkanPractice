@@ -16,6 +16,8 @@ int main() {
 	}
 
 	vk.initGlobalFunctions();
+	vk.printInstanceExtensionProperties();
+	vk.printInstanceLayerProperties();
 
 	cout << "FINISH" << endl;
 }
