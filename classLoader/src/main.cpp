@@ -28,7 +28,7 @@ int main() {
 	cout << lib->getLayerPropertiesString() << endl;
 
 
-	// Vk_Instance instance = lib->createInstance(...);
+	auto instance = lib->createInstance();
 	// Vk_Device dev = instance.getDevice(...);
 	// Vk_queue queue = dev.createQueue(...);
 

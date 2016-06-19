@@ -21,9 +21,10 @@ std::function<T> Vk_Library::loadFunction(const std::string& functionName) const
 
 
 template<class T>
-std::function<T> Vk_Library::loadInstanceFunction(const std::string& functionName) const {
+std::function<T> Vk_Library::loadInstanceFunction(const std::string& functionName,
+    VkInstance instance) const {
 
-    auto functionPtr = _vkGetInstanceProcAddr(nullptr, functionName.c_str());
+    auto functionPtr = _vkGetInstanceProcAddr(instance, functionName.c_str());
     if(functionPtr == nullptr) {
         throw std::runtime_error("Error loading Vulkan instance function: \"" + functionName);
     }
