@@ -98,7 +98,7 @@ std::string Vk_Library::getLayerPropertiesString() const {
 
 	uint32_t layerCount = 0;
 	if(_vkEnumerateInstanceLayerProperties(&layerCount, nullptr) != VK_SUCCESS) {
-		throw runtime_error{std::string(__FUNCTION__) + std::string("error getting Vulkan instance layer count")};
+		throw runtime_error{std::string(__FUNCTION__) + std::string("(): error getting Vulkan instance layer count")};
 	}
 
 	os << "Vulkan instance layers count: " << layerCount << endl;
@@ -182,6 +182,11 @@ Vk_Instance::Vk_Instance() {
 	// use a shared_ptr as reference counter for this, so it can call
 	// _vkDestroyInstance only once
 	_refCounter = std::make_shared<int>(0);
+
+
+	// load Instance level functions
+	loadFunctions();
+	loadPhysicalDevices();
 }
 
 Vk_Instance::~Vk_Instance() {
@@ -190,5 +195,68 @@ Vk_Instance::~Vk_Instance() {
 	if(_refCounter.unique()) {
 		std::cout << "\tcalling _vkDestroyInstance()" << std::endl;
 		_vkDestroyInstance(_instance, nullptr);
+	}
+}
+
+int Vk_Instance::getDeviceCount() const {
+	uint32_t devCount = 0;
+	if(_vkEnumeratePhysicalDevices(_instance, &devCount, nullptr) != VK_SUCCESS) {
+		throw runtime_error{std::string(__FUNCTION__) + std::string("(): error getting Vulkan physical device count")};
+	}
+	return devCount;
+}
+
+/*
+typedef struct VkPhysicalDeviceProperties {
+    uint32_t                            apiVersion;
+    uint32_t                            driverVersion;
+    uint32_t                            vendorID;
+    uint32_t                            deviceID;
+    VkPhysicalDeviceType                deviceType;
+    char                                deviceName[VK_MAX_PHYSICAL_DEVICE_NAME_SIZE];
+    uint8_t                             pipelineCacheUUID[VK_UUID_SIZE];
+    VkPhysicalDeviceLimits              limits;
+    VkPhysicalDeviceSparseProperties    sparseProperties;
+} VkPhysicalDeviceProperties;
+
+*/
+std::string Vk_Instance::getPhysicalDevicePropertiesString(const int devIndex) const {
+
+	std::stringbuf buffer;
+	std::ostream os{&buffer};
+
+	VkPhysicalDeviceProperties prop;
+	_vkGetPhysicalDeviceproperties(_physicalDevices[devIndex], &prop);
+
+	os << "API version: " << std::hex << prop.apiVersion << std::endl;
+	os << "Driver version: " << std::hex << prop.driverVersion << std::endl;
+	os << "Vendor ID: " << std::hex << prop.vendorID << std::endl;
+	os << "Device ID: " << std::hex << prop.deviceID << std::endl;
+	os << "Device type: " << prop.deviceType << std::endl;
+	os << "Device name: " << prop.deviceName << std::endl;
+
+	return buffer.str();
+}
+
+void Vk_Instance::loadFunctions() {
+
+	auto vkLib = Vk_Library::get();
+	_vkEnumeratePhysicalDevices = vkLib->loadInstanceFunction<VkResult(VkInstance, uint32_t*, VkPhysicalDevice*)>("vkEnumeratePhysicalDevices", _instance);
+	_vkGetPhysicalDeviceproperties = vkLib->loadInstanceFunction<void(VkPhysicalDevice, VkPhysicalDeviceProperties*)>("vkGetPhysicalDeviceProperties", _instance);
+}
+
+void Vk_Instance::loadPhysicalDevices() {
+
+	uint32_t devCount = getDeviceCount();
+	_physicalDevices.resize(devCount);
+
+	VkResult res = _vkEnumeratePhysicalDevices(_instance, &devCount, &_physicalDevices[0]);
+	if(res != VK_SUCCESS) {
+		throw runtime_error{std::string(__FUNCTION__) + std::string("(): error creating physical device list")};
+	}
+
+	// check that all devices were listed
+	if(devCount != getDeviceCount()) {
+		throw runtime_error{std::string(__FUNCTION__) + std::string("(): not all physical devices were created")};	
 	}
 }

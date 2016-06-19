@@ -29,6 +29,14 @@ int main() {
 
 
 	auto instance = lib->createInstance();
+	std::cout << "Physical device count: " << instance->getDeviceCount() << std::endl;
+
+	std::cout << "Device properties:" << std::endl;
+	std::cout << instance->getPhysicalDevicePropertiesString(0) << std::endl;
+
+	// or should I go directly to create queues?
+	// auto dev = instance->getDevice("gpu-0");
+	// auto queue = instance->createQueue("gpu-0", COMPUTE);
 	// Vk_Device dev = instance.getDevice(...);
 	// Vk_queue queue = dev.createQueue(...);
 
