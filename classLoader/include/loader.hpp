@@ -82,6 +82,7 @@ public:
 	int getDeviceCount() const;
 
 	std::string getPhysicalDevicePropertiesString(const int devIndex) const;
+	std::string getPhysicalDeviceQueueFamilyPropertiesString(const int devIndex) const;
 
 private:
 	void loadFunctions();
@@ -100,6 +101,7 @@ private:
     // Physical device functions
     std::function<VkResult(VkInstance, uint32_t*, VkPhysicalDevice*)> _vkEnumeratePhysicalDevices;
     std::function<void(VkPhysicalDevice, VkPhysicalDeviceProperties*)> _vkGetPhysicalDeviceproperties;
+    std::function<void(VkPhysicalDevice, uint32_t*, VkQueueFamilyProperties*)> _vkGetPhysicalDeviceQueueFamilyProperties;
 };
 
 

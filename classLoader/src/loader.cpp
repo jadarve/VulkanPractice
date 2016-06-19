@@ -238,11 +238,52 @@ std::string Vk_Instance::getPhysicalDevicePropertiesString(const int devIndex) c
 	return buffer.str();
 }
 
+/*
+typedef struct VkQueueFamilyProperties {
+    VkQueueFlags    queueFlags;
+    uint32_t        queueCount;
+    uint32_t        timestampValidBits;
+    VkExtent3D      minImageTransferGranularity;
+} VkQueueFamilyProperties;
+*/
+std::string Vk_Instance::getPhysicalDeviceQueueFamilyPropertiesString(const int devIndex) const {
+
+	std::stringbuf buffer;
+	std::ostream os{&buffer};
+
+	uint32_t count = 0;
+	_vkGetPhysicalDeviceQueueFamilyProperties(_physicalDevices[devIndex], &count, nullptr);
+
+	os << "Physical device queue family count: " << count << std::endl;
+
+	if(count != 0) {
+		std::vector<VkQueueFamilyProperties> prop(count);
+		_vkGetPhysicalDeviceQueueFamilyProperties(_physicalDevices[devIndex], &count, &prop[0]);
+
+		for(auto q : prop) {
+
+			os << "\tflags: " << std::hex << q.queueFlags << std::endl;
+			os << "\t\tGRAPHICS:\t" << (bool)(q.queueFlags & VK_QUEUE_GRAPHICS_BIT) << std::endl;
+			os << "\t\tCOMPUTE:\t" << (bool)(q.queueFlags & VK_QUEUE_COMPUTE_BIT) << std::endl;
+			os << "\t\tTRANSFER:\t" << (bool)(q.queueFlags & VK_QUEUE_TRANSFER_BIT) << std::endl;
+			os << "\t\tSPARSE:\t\t" << (bool)(q.queueFlags & VK_QUEUE_SPARSE_BINDING_BIT) << std::endl;
+
+			os << "\tqueue count: " << q.queueCount << std::endl;
+			os << "\ttime stamp valid bits: " << std::hex << q.timestampValidBits << std::endl;
+			os << "\tmin image transfer: [" << q.minImageTransferGranularity.width << ", "
+				<< q.minImageTransferGranularity.height << ", " << q.minImageTransferGranularity.depth << "]" << std::endl;
+		}
+	}
+	
+	return buffer.str();
+}
+
 void Vk_Instance::loadFunctions() {
 
 	auto vkLib = Vk_Library::get();
 	_vkEnumeratePhysicalDevices = vkLib->loadInstanceFunction<VkResult(VkInstance, uint32_t*, VkPhysicalDevice*)>("vkEnumeratePhysicalDevices", _instance);
 	_vkGetPhysicalDeviceproperties = vkLib->loadInstanceFunction<void(VkPhysicalDevice, VkPhysicalDeviceProperties*)>("vkGetPhysicalDeviceProperties", _instance);
+	_vkGetPhysicalDeviceQueueFamilyProperties = vkLib->loadInstanceFunction<void(VkPhysicalDevice, uint32_t*, VkQueueFamilyProperties*)>("vkGetPhysicalDeviceQueueFamilyProperties", _instance);
 }
 
 void Vk_Instance::loadPhysicalDevices() {

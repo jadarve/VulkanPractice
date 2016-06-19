@@ -34,6 +34,9 @@ int main() {
 	std::cout << "Device properties:" << std::endl;
 	std::cout << instance->getPhysicalDevicePropertiesString(0) << std::endl;
 
+	std::cout << "Device queue family properties" << std::endl;
+	std::cout << instance->getPhysicalDeviceQueueFamilyPropertiesString(0) << std::endl;
+
 	// or should I go directly to create queues?
 	// auto dev = instance->getDevice("gpu-0");
 	// auto queue = instance->createQueue("gpu-0", COMPUTE);
