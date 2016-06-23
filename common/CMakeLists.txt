@@ -11,6 +11,7 @@ set (LIBS
 set (SRCS
 	src/Vk_Library.cpp
 	src/Vk_Instance.cpp
+	src/Vk_Device.cpp
 )
 
 message(STATUS "Sources: ${SRCS}")

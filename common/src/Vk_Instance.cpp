@@ -71,20 +71,6 @@ int Vk_Instance::getDeviceCount() const {
 	return devCount;
 }
 
-/*
-typedef struct VkPhysicalDeviceProperties {
-    uint32_t                            apiVersion;
-    uint32_t                            driverVersion;
-    uint32_t                            vendorID;
-    uint32_t                            deviceID;
-    VkPhysicalDeviceType                deviceType;
-    char                                deviceName[VK_MAX_PHYSICAL_DEVICE_NAME_SIZE];
-    uint8_t                             pipelineCacheUUID[VK_UUID_SIZE];
-    VkPhysicalDeviceLimits              limits;
-    VkPhysicalDeviceSparseProperties    sparseProperties;
-} VkPhysicalDeviceProperties;
-
-*/
 std::string Vk_Instance::getPhysicalDevicePropertiesString(const int devIndex) const {
 
 	std::stringbuf buffer;
@@ -103,14 +89,6 @@ std::string Vk_Instance::getPhysicalDevicePropertiesString(const int devIndex) c
 	return buffer.str();
 }
 
-/*
-typedef struct VkQueueFamilyProperties {
-    VkQueueFlags    queueFlags;
-    uint32_t        queueCount;
-    uint32_t        timestampValidBits;
-    VkExtent3D      minImageTransferGranularity;
-} VkQueueFamilyProperties;
-*/
 std::string Vk_Instance::getPhysicalDeviceQueueFamilyPropertiesString(const int devIndex) const {
 
 	std::stringbuf buffer;
@@ -143,12 +121,25 @@ std::string Vk_Instance::getPhysicalDeviceQueueFamilyPropertiesString(const int 
 	return buffer.str();
 }
 
+
+std::shared_ptr<Vk_Device> Vk_Instance::createDevice(const int physicalDeviceIndex) {
+
+	// FROM DOCUMENTATION [p. 43]
+	// Once an application has identified a physical device with the queue(s)
+	// that it desires to use, it will create those queues in conjunction with a logical device.
+
+	return nullptr;
+}
+
 void Vk_Instance::loadFunctions() {
 
 	auto vkLib = Vk_Library::get();
+
 	_vkEnumeratePhysicalDevices = vkLib->loadInstanceFunction<VkResult(VkInstance, uint32_t*, VkPhysicalDevice*)>("vkEnumeratePhysicalDevices", _instance);
 	_vkGetPhysicalDeviceproperties = vkLib->loadInstanceFunction<void(VkPhysicalDevice, VkPhysicalDeviceProperties*)>("vkGetPhysicalDeviceProperties", _instance);
 	_vkGetPhysicalDeviceQueueFamilyProperties = vkLib->loadInstanceFunction<void(VkPhysicalDevice, uint32_t*, VkQueueFamilyProperties*)>("vkGetPhysicalDeviceQueueFamilyProperties", _instance);
+	_vkCreateDevice = vkLib->loadInstanceFunction<VkResult(VkPhysicalDevice, const VkDeviceCreateInfo*, const VkAllocationCallbacks*, VkDevice*)>("vkCreateDevice", _instance);
+	_vkGetDeviceProcAddr = vkLib->loadInstanceFunction<void(VkDevice, const char*)>("vkGetDeviceProcAddr", _instance);
 }
 
 void Vk_Instance::loadPhysicalDevices() {
