@@ -9,7 +9,8 @@ set (LIBS
 )
 
 set (SRCS
-	src/loader.cpp
+	src/Vk_Library.cpp
+	src/Vk_Instance.cpp
 )
 
 message(STATUS "Sources: ${SRCS}")
