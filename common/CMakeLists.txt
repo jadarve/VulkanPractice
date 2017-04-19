@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 2.8)
 
-include_directories(include)
+# set(VULKAN_SDK_ROOT ~/vulkan/VulkanSDK)
+# set(VULKAN_SDK_VERSION 1.0.46.0)
+# set(VULKAN_SDK_ARCH x86_64)
+# set(VULKAN_SDK ${VULKAN_SDK_ROOT}/${VULKAN_SDK_VERSION}/${VULKAN_SDK_ARCH})
+
+include_directories(include
+    $ENV{VULKAN_SDK}/include)
 
 set (CMAKE_CXX_FLAGS            "-std=c++11")
 

@@ -3,6 +3,7 @@ project(classLoader)
 
 include_directories(include
 	../common/include
+    $ENV{VULKAN_SDK}/include
 )
 link_directories(${CMAKE_BINARY_DIR}/common)
 
