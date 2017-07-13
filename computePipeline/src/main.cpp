@@ -15,6 +15,8 @@ void printMemoryProperties(const vk::PhysicalDeviceMemoryProperties& memProperti
 
 uint32_t getComputeQueueIndex(vk::PhysicalDevice& device);
 
+vk::Pipeline createComputePipeline(vk::Device& device);
+
 int main() {
 
 
@@ -42,6 +44,8 @@ int main() {
         .setQueueFamilyIndex(queueIndex)
         .setPQueuePriorities(&queuePriority);
 
+    std::vector<uint32_t> queueFamilies {queueIndex};
+
 
     vk::DeviceCreateInfo devCreateInfo = vk::DeviceCreateInfo()
             .setQueueCreateInfoCount(1)
@@ -50,10 +54,84 @@ int main() {
     vk::Device device = physicalDevice.createDevice(devCreateInfo);
     cout << "Device created" << endl;
 
+
+    /////////////////////////
+    // MEMORY ALLOCATION
+    /////////////////////////
+
+    // query memory heaps and types
     vk::PhysicalDeviceMemoryProperties memProperties = physicalDevice.getMemoryProperties();
     printMemoryProperties(memProperties);
 
+    size_t bufferLength = 128;
+    size_t bufferSize = bufferLength*sizeof(float);
+
+    vk::MemoryAllocateInfo allocInfo = vk::MemoryAllocateInfo()
+        .setAllocationSize(2*bufferSize)
+        .setMemoryTypeIndex(9);
+
+    // allocate device memory to store the buffer data
+    vk::DeviceMemory devMemory = device.allocateMemory(allocInfo);
+
+
+    vk::BufferCreateInfo bufferInfo = vk::BufferCreateInfo()
+        .setSharingMode(vk::SharingMode::eExclusive)
+        .setSize(bufferSize)
+        .setUsage(vk::BufferUsageFlagBits::eStorageBuffer)
+        .setQueueFamilyIndexCount(queueFamilies.size())
+        .setPQueueFamilyIndices(queueFamilies.data());
+
+    vk::Buffer buffer0 = device.createBuffer(bufferInfo);
+    vk::Buffer buffer1 = device.createBuffer(bufferInfo);
+
+    // bind buffers to device memory
+    device.bindBufferMemory(buffer0, devMemory, 0);
+    device.bindBufferMemory(buffer1, devMemory, bufferSize);
+
+
+    float* bufferData = static_cast<float*>(device.mapMemory(devMemory, 0, bufferSize));
+    for(int i = 0; i < bufferLength; i ++) {
+        bufferData[i] = i;
+    }
+    device.unmapMemory(devMemory);
+
+
+    vk::Pipeline pipeline = createComputePipeline(device);
+    
+    // destroy the buffers
+    device.destroyBuffer(buffer0);
+    device.destroyBuffer(buffer1);
+
+    // free device memory
+    device.freeMemory(devMemory);
+
+    cout << "FINISH" << endl;
     return EXIT_SUCCESS;
+}
+
+
+vk::Pipeline createComputePipeline(vk::Device& device) {
+
+    // vk::ShaderModuleCreateInfo shaderCreateInfo = vk::ShaderModuleCreateInfo();
+
+    // vk::ShaderModule shaderModule = device.createShaderModule(shaderCreateInfo);
+
+    // vk::DescriptorSetLayoutCreateInfo descCreateInfo;
+    // vk::DescriptorSetLayout descLayout = device.createDescriptorSetLayout(descCreateInfo);
+
+    // device.createPipelineLayout(const vk::PipelineLayoutCreateInfo *pCreateInfo, const vk::AllocationCallbacks *pAllocator, vk::PipelineLayout *pPipelineLayout)
+
+    // vk::PipelineLayout layout = vk::PipelineLayout();
+
+    // vk::PipelineShaderStageCreateInfo stage;
+
+    // vk::ComputePipelineCreateInfo createInfo = vk::ComputePipelineCreateInfo()
+    //     .setStage(stage)
+    //     .setLayout(layout);
+
+    // vk::Pipeline pipe = device.createComputePipeline(vk::PipelineCache(), createInfo);
+    // return pipe;
+    return vk::Pipeline();
 }
 
 
