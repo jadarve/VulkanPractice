@@ -1,0 +1,13 @@
+#version 430
+
+
+// TODO: need to figure out how to assign this from the host
+layout(local_size_x=64, local_size_y=1, local_size_z=1) in;
+
+layout (binding=0) buffer a2 {
+    float outputBuffer[];
+};
+
+void main() {
+    outputBuffer[gl_GlobalInvocationID.x] = 1.0;
+}
