@@ -20,6 +20,7 @@
     "settings" : {
          "ecc_common_flags": [
             "-I$project_base_path/core/include/",
+            "-I$project_base_path/computeKit/include/",
             "-I/home/jadarve/vulkan/VulkanSDK/1.0.46.0/x86_64/include"
         ],
         "use_libclang" : true,

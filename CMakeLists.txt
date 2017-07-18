@@ -19,4 +19,5 @@ set (CMAKE_CXX_FLAGS            "-std=c++11")
 add_subdirectory(common)
 add_subdirectory(classLoader)
 add_subdirectory(computePipeline)
+add_subdirectory(computeKit)
 
