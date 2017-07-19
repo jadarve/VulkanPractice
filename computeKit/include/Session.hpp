@@ -6,6 +6,7 @@
 #include <vulkan/vulkan.hpp>
 
 #include "MemoryManager.hpp"
+#include "Buffer.hpp"
 
 // compute kit
 namespace ck {
@@ -23,7 +24,7 @@ public:
     uint32_t getComputeFamilyQueueIndex();
     void allocateMemory(const vk::MemoryPropertyFlags flags, const size_t size);
     
-    vk::Buffer createBuffer(const vk::MemoryPropertyFlags flags, const size_t size);
+    ck::Buffer createBuffer(const vk::MemoryPropertyFlags flags, const size_t size);
     std::vector<vk::MemoryPropertyFlags> getMemoryProperties() const;
 
 
@@ -38,7 +39,8 @@ private:
     vk::Device device;
     uint32_t computeQueueFamilyIndex;
 
-    std::vector<MemoryManager> memories;
+    std::vector<ck::MemoryManager> memories;
+    std::vector<ck::Buffer> buffers;
 
 };
 

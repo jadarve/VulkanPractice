@@ -8,18 +8,21 @@ namespace ck {
 
 using namespace std;
 
-MemoryManager::MemoryManager() {
-
+MemoryManager::MemoryManager():
+    size(0),
+    offset(0) {
 }
 
 
-MemoryManager::MemoryManager(   vk::PhysicalDevice& physicalDevice,
-                                vk::Device& device,
-                                const vk::MemoryPropertyFlags flags,
-                                const size_t size) {
+MemoryManager::MemoryManager(vk::PhysicalDevice& physicalDevice,
+    vk::Device& device, const vk::MemoryPropertyFlags flags,
+    const size_t size) :
 
-    memoryFlags = flags;
-    this->device = device;
+    memoryFlags(flags),
+    device(device),
+    size(size),
+    offset(0) {
+
 
     vk::PhysicalDeviceMemoryProperties memProperties = physicalDevice.getMemoryProperties();
 
@@ -69,6 +72,13 @@ size_t MemoryManager::getSize() const {
 
 vk::MemoryPropertyFlags MemoryManager::getMemoryFlags() const {
     return memoryFlags;
+}
+
+
+void MemoryManager::bindBuffer(const ck::Buffer& buffer) {
+
+    device.bindBufferMemory(buffer.buffer, memory, offset);
+    offset += buffer.size;
 }
 
 } // namespace ck

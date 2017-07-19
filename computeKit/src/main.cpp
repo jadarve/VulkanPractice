@@ -6,6 +6,7 @@
 #include <vulkan/vulkan.hpp>
 
 #include "Session.hpp"
+#include "Buffer.hpp"
 
 using namespace std;
 
@@ -19,7 +20,19 @@ int main() {
 
     ck::Session session;
     printMemoryFlags(session);
-    session.allocateMemory(vk::MemoryPropertyFlagBits::eDeviceLocal, 1024*1024*1024);
+
+    vk::MemoryPropertyFlags memDevLocal = vk::MemoryPropertyFlagBits::eDeviceLocal;
+    vk::MemoryPropertyFlags memHostVisible = vk::MemoryPropertyFlagBits::eHostVisible |
+                            vk::MemoryPropertyFlagBits::eHostCoherent;
+
+    // allocate memories
+    session.allocateMemory(memDevLocal, 1024*1024*1024);
+    session.allocateMemory( memHostVisible, 1024*1024*1024);
+
+    // create a buffer
+    ck::Buffer buffer0 = session.createBuffer(memHostVisible, 1024);
+
+    // build a compute pipeline
 
     std::this_thread::sleep_for (std::chrono::seconds(5));
 

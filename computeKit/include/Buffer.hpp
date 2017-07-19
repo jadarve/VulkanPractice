@@ -1,5 +1,5 @@
-#ifndef MEMORY_MANAGER_HPP_
-#define MEMORY_MANAGER_HPP_
+#ifndef BUFFER_HPP_
+#define BUFFER_HPP_
 
 #include <vector>
 #include <memory>
@@ -10,15 +10,26 @@
 // compute kit
 namespace ck {
 
+// forward declarations
+class MemoryManager;
+class Session;
+
+
+
 class Buffer {
+
 
 private:
     vk::Buffer buffer;
     size_t size;
-    
+ 
+
+friend class ck::MemoryManager;
+friend class ck::Session;
+
 };
 
 
 } // namespace ck
 
-#endif /* MEMORY_MANAGER_HPP_ */
+#endif /* BUFFER_HPP_ */

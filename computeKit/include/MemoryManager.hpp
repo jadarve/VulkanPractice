@@ -5,6 +5,7 @@
 
 #include <vulkan/vulkan.hpp>
 
+#include "Buffer.hpp"
 
 // compute kit
 namespace ck {
@@ -24,11 +25,14 @@ public:
     size_t getSize() const;
     vk::MemoryPropertyFlags getMemoryFlags() const;
 
+    void bindBuffer(const ck::Buffer& buffer);
+
 private:
     vk::Device device;
     vk::DeviceMemory memory;
     vk::MemoryPropertyFlags memoryFlags;
     size_t size;
+    size_t offset;
 };
 
 

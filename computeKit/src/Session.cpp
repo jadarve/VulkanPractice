@@ -27,6 +27,11 @@ Session::~Session() {
 
     cout << "Session::~Session()" << endl;
 
+    // destroy all buffers
+    for(auto buffer : buffers) {
+        device.destroyBuffer(buffer.buffer);
+    }
+
     for(auto memManager : memories) {
         memManager.free();
     }
@@ -86,7 +91,7 @@ void Session::allocateMemory(const vk::MemoryPropertyFlags flags, const size_t s
 }
 
 
-vk::Buffer Session::createBuffer(const vk::MemoryPropertyFlags flags, const size_t size) {
+ck::Buffer Session::createBuffer(const vk::MemoryPropertyFlags flags, const size_t size) {
 
     // find a memory manager with the same flags as the parameter
     // and try to allocate a buffer
@@ -94,9 +99,29 @@ vk::Buffer Session::createBuffer(const vk::MemoryPropertyFlags flags, const size
     // probably need to wrap vk::Buffer with something with a reference
     // counter
 
+    vk::BufferCreateInfo bufferInfo = vk::BufferCreateInfo()
+        .setSharingMode(vk::SharingMode::eExclusive)
+        .setSize(size)
+        .setUsage(vk::BufferUsageFlagBits::eStorageBuffer)
+        .setQueueFamilyIndexCount(1)
+        .setPQueueFamilyIndices(&computeQueueFamilyIndex);
 
 
-    return vk::Buffer();
+    ck::Buffer buffer;
+
+    buffer.buffer = device.createBuffer(bufferInfo);
+    buffer.size = size;
+
+    // bind the buffer to a memory with the same flags
+    for(auto memManager : memories) {
+        if(memManager.getMemoryFlags() == flags) {
+            memManager.bindBuffer(buffer);
+            break;
+        }
+    }
+
+    buffers.push_back(buffer);
+    return buffer;
 }
 
 
