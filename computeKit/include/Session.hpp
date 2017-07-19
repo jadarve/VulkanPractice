@@ -1,8 +1,11 @@
 #ifndef SESSION_HPP_
 #define SESSION_HPP_
 
+#include <vector>
 
 #include <vulkan/vulkan.hpp>
+
+#include "MemoryManager.hpp"
 
 // compute kit
 namespace ck {
@@ -18,7 +21,11 @@ public:
 
 public:
     uint32_t getComputeFamilyQueueIndex();
-    vk::Buffer createBuffer(const vk::MemoryPropertyFlags& flags, const size_t size);
+    void allocateMemory(const vk::MemoryPropertyFlags flags, const size_t size);
+    
+    vk::Buffer createBuffer(const vk::MemoryPropertyFlags flags, const size_t size);
+    std::vector<vk::MemoryPropertyFlags> getMemoryProperties() const;
+
 
 private:
     void createInstance();
@@ -29,12 +36,9 @@ private:
     vk::Instance instance;
     vk::PhysicalDevice physicalDevice;
     vk::Device device;
-
-    vk::DeviceMemory memory;
-    size_t memorySize;
-
-
     uint32_t computeQueueFamilyIndex;
+
+    std::vector<MemoryManager> memories;
 
 };
 

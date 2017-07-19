@@ -12,13 +12,27 @@ namespace ck {
 class MemoryManager {
 
 public:
-    MemoryManager(vk::Device& device);
+    MemoryManager();
+    MemoryManager(  vk::PhysicalDevice& physicalDevice,
+                    vk::Device& device,
+                    const vk::MemoryPropertyFlags flags,
+                    const size_t size);
+    ~MemoryManager();
+
+
+public:
+    size_t getSize() const;
+    vk::MemoryPropertyFlags getMemoryFlags() const;
 
 private:
     vk::Device device;
+    vk::DeviceMemory memory;
+    vk::MemoryPropertyFlags memoryFlags;
+    size_t size;
 
-    size_t pageSize;
-    std::vector<vk::DeviceMemory> memoryPages;
+
+    // size_t pageSize;
+    // std::vector<vk::DeviceMemory> memoryPages;
 };
 
 

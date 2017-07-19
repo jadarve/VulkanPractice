@@ -36,7 +36,53 @@ uint32_t Session::getComputeFamilyQueueIndex() {
     return computeQueueFamilyIndex;
 }
 
-vk::Buffer createBuffer(const vk::MemoryPropertyFlags& flags, const size_t size) {
+
+std::vector<vk::MemoryPropertyFlags> Session::getMemoryProperties() const {
+
+    vector<vk::MemoryPropertyFlags> memTypes;
+
+    vk::PhysicalDeviceMemoryProperties memProperties = physicalDevice.getMemoryProperties();
+    for(int i = 0; i < memProperties.memoryTypeCount; i ++) {
+
+        vk::MemoryPropertyFlags flags = memProperties.memoryTypes[i].propertyFlags;
+
+        // filter out flags with all bits set to 0
+        if(flags == vk::MemoryPropertyFlags()) continue;
+
+        // insert flags if it is not already memTypes
+        bool found = false;
+        for(auto f : memTypes) {
+            if(f == flags) {
+                found = true;
+                break;
+            }
+        }
+
+        if(!found) {
+            memTypes.push_back(flags);
+        }
+    }
+
+    return memTypes;
+}
+
+
+void Session::allocateMemory(const vk::MemoryPropertyFlags flags, const size_t size) {
+
+    // if there is already a memory with the same flags, do nothing
+    for(auto memManager : memories) {
+        if(flags == memManager.getMemoryFlags()) {
+            return;
+        }
+    }
+
+    cout << "Session::allocateMemory(): " << size << endl;;
+    MemoryManager manager(physicalDevice, device, flags, size);
+    memories.push_back(manager);
+}
+
+
+vk::Buffer Session::createBuffer(const vk::MemoryPropertyFlags flags, const size_t size) {
 
     // find a memory manager with the same flags as the parameter
     // and try to allocate a buffer
@@ -44,51 +90,11 @@ vk::Buffer createBuffer(const vk::MemoryPropertyFlags& flags, const size_t size)
     // probably need to wrap vk::Buffer with something with a reference
     // counter
 
+
+
     return vk::Buffer();
 }
 
-// size_t Session::allocateDeviceMemory(const vk::MemoryPropertyFlags& flags, size_t size) {
-
-//     vk::PhysicalDeviceMemoryProperties memProperties = physicalDevice.getMemoryProperties();
-
-    
-//     // TODO check size alignment
-//     size_t sizeAligned = size;
-
-//     // search for a memory type that checks all the type flags
-//     int typeIndex = -1;
-//     for(int i = 0; i <  memProperties.memoryTypeCount; i ++) {
-
-//         vk::MemoryType type = memProperties.memoryTypes[i];
-//         vk::MemoryPropertyFlags tflags = type.propertyFlags;
-
-//         // check flags
-//         if(flags == tflags) {
-
-//             // check that there is enough memory in the heap
-//             vk::MemoryHeap heap = memProperties.memoryHeaps[type.heapIndex];
-//             if(heap.size > size) {
-//                 typeIndex = i;
-//                 break;
-//             }
-//         }
-//     }
-
-//     if(typeIndex < 0) {
-//         throw system_error(error_code(), "Unable to find a memory type that supports all flags.");
-//     }
-
-
-//     vk::MemoryAllocateInfo allocInfo = vk::MemoryAllocateInfo()
-//         .setAllocationSize(sizeAligned)
-//         .setMemoryTypeIndex(typeIndex);
-
-//     // allocate device memory to store the buffer data
-//     memory = device.allocateMemory(allocInfo);
-//     memorySize = sizeAligned;
-
-//     return sizeAligned;
-// }
 
 
 void Session::createInstance() {
