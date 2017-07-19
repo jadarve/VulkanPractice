@@ -56,11 +56,10 @@ MemoryManager::MemoryManager(   vk::PhysicalDevice& physicalDevice,
     memory = device.allocateMemory(allocateInfo);
 }
 
-MemoryManager::~MemoryManager() {
-    cout << "MemoryManager::~MemoryManager()" << endl;
 
-    // FIXME: the memory can only be freed by the object that owns it.
-    // device.freeMemory(memory);
+void MemoryManager::free() {
+
+    device.freeMemory(memory);
 }
 
 

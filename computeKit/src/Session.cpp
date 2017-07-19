@@ -27,6 +27,10 @@ Session::~Session() {
 
     cout << "Session::~Session()" << endl;
 
+    for(auto memManager : memories) {
+        memManager.free();
+    }
+
     device.destroy();
     instance.destroy();
 }

@@ -17,10 +17,10 @@ public:
                     vk::Device& device,
                     const vk::MemoryPropertyFlags flags,
                     const size_t size);
-    ~MemoryManager();
 
 
 public:
+    void free();
     size_t getSize() const;
     vk::MemoryPropertyFlags getMemoryFlags() const;
 
@@ -29,10 +29,6 @@ private:
     vk::DeviceMemory memory;
     vk::MemoryPropertyFlags memoryFlags;
     size_t size;
-
-
-    // size_t pageSize;
-    // std::vector<vk::DeviceMemory> memoryPages;
 };
 
 
