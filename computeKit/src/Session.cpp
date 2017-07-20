@@ -78,16 +78,22 @@ std::vector<vk::MemoryPropertyFlags> Session::getMemoryProperties() const {
 
 void Session::allocateMemory(const vk::MemoryPropertyFlags flags, const size_t size) {
 
+    cout << "Session::allocateMemory(): requested flags:"  << endl;
+    printMemoryFlags(flags, "");
     // if there is already a memory with the same flags, do nothing
     for(auto memManager : memories) {
-        if(flags == memManager.getMemoryFlags()) {
+        printMemoryFlags(memManager.getMemoryFlags(), "memory manager");
+        if(containsMemoryFlags(flags, memManager.getMemoryFlags())) {
+            cout << "Session::allocateMemory(): compatible memory already allocated."  << endl;
             return;
         }
     }
 
-    cout << "Session::allocateMemory(): " << size << endl;;
+    cout << "Session::allocateMemory(): memory size (bytes): " << size << endl;;
     MemoryManager manager(physicalDevice, device, flags, size);
     memories.push_back(manager);
+
+    printMemoryFlags(manager.getMemoryFlags(), "Session::allocateMemory(): allocated memory flags");
 }
 
 
@@ -114,7 +120,7 @@ ck::Buffer Session::createBuffer(const vk::MemoryPropertyFlags flags, const size
 
     // bind the buffer to a memory with the same flags
     for(auto memManager : memories) {
-        if(memManager.getMemoryFlags() == flags) {
+        if(containsMemoryFlags(flags, memManager.getMemoryFlags())) {
             memManager.bindBuffer(buffer);
             break;
         }

@@ -2,6 +2,7 @@
 #define MEMORY_MANAGER_HPP_
 
 #include <vector>
+#include <string>
 
 #include <vulkan/vulkan.hpp>
 
@@ -9,6 +10,11 @@
 
 // compute kit
 namespace ck {
+
+
+bool containsMemoryFlags(const vk::MemoryPropertyFlags& flags1, const vk::MemoryPropertyFlags& flags2);
+void printMemoryFlags(const vk::MemoryPropertyFlags& flags, const std::string& prefix="",
+    const std::string& tabs="\t\t");
 
 class MemoryManager {
 

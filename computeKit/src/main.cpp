@@ -11,7 +11,7 @@
 using namespace std;
 
 // forward declarations
-void printMemoryFlags(const ck::Session& session);
+void printSessionMemoryFlags(const ck::Session& session);
 
 
 int main() {
@@ -19,15 +19,15 @@ int main() {
     cout << "START" << endl;
 
     ck::Session session;
-    printMemoryFlags(session);
+    printSessionMemoryFlags(session);
 
     vk::MemoryPropertyFlags memDevLocal = vk::MemoryPropertyFlagBits::eDeviceLocal;
     vk::MemoryPropertyFlags memHostVisible = vk::MemoryPropertyFlagBits::eHostVisible |
                             vk::MemoryPropertyFlagBits::eHostCoherent;
 
     // allocate memories
-    session.allocateMemory(memDevLocal, 1024*1024*1024);
-    session.allocateMemory( memHostVisible, 1024*1024*1024);
+    session.allocateMemory(memDevLocal, 32*1024*1024);
+    session.allocateMemory(memHostVisible, 32*1024*1024);
 
     // create a buffer
     ck::Buffer buffer0 = session.createBuffer(memHostVisible, 1024);
@@ -41,7 +41,7 @@ int main() {
 }
 
 
-void printMemoryFlags(const ck::Session& session) {
+void printSessionMemoryFlags(const ck::Session& session) {
 
     vector<vk::MemoryPropertyFlags> memFlags = session.getMemoryProperties();
 
