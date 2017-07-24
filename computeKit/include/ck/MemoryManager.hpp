@@ -6,7 +6,7 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "Buffer.hpp"
+#include "ck/Buffer.hpp"
 
 // compute kit
 namespace ck {

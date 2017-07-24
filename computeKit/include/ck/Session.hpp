@@ -5,8 +5,8 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "MemoryManager.hpp"
-#include "Buffer.hpp"
+#include "ck/MemoryManager.hpp"
+#include "ck/Buffer.hpp"
 
 // compute kit
 namespace ck {

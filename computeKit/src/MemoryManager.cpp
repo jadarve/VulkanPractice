@@ -2,7 +2,7 @@
 #include <iostream>
 #include <system_error>
 
-#include "MemoryManager.hpp"
+#include "ck/MemoryManager.hpp"
 
 namespace ck {
 

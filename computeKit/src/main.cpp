@@ -5,9 +5,9 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "Session.hpp"
-#include "Buffer.hpp"
-#include "Kernel.hpp"
+#include "ck/Session.hpp"
+#include "ck/Buffer.hpp"
+#include "ck/Kernel.hpp"
 
 using namespace std;
 
