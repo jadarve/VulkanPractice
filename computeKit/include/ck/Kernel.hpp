@@ -1,5 +1,5 @@
-#ifndef KERNEL_MANAGER_HPP_
-#define KERNEL_MANAGER_HPP_
+#ifndef KERNEL_HPP_
+#define KERNEL_HPP_
 
 #include <string>
 
@@ -41,4 +41,4 @@ private:
 
 } // namespace ck
 
-#endif /* KERNEL_MANAGER_HPP_ */
+#endif /* KERNEL_HPP_ */
