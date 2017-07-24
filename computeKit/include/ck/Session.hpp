@@ -2,11 +2,13 @@
 #define SESSION_HPP_
 
 #include <vector>
+#include <string>
 
 #include <vulkan/vulkan.hpp>
 
 #include "ck/MemoryManager.hpp"
 #include "ck/Buffer.hpp"
+#include "ck/Kernel.hpp"
 
 // compute kit
 namespace ck {
@@ -27,6 +29,8 @@ public:
     ck::Buffer createBuffer(const vk::MemoryPropertyFlags flags, const size_t size);
     std::vector<vk::MemoryPropertyFlags> getMemoryProperties() const;
 
+    vk::ShaderModule createShaderModule(const std::string& filename);
+    ck::Kernel createKernel();
 
 private:
     void createInstance();

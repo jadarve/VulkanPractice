@@ -44,9 +44,12 @@ int main() {
     // Except for the compute pipeline part of the creation process, all the other objects
     // are static. I could have a kernel factory.
 
-    // ck::Kernel kernel = ck::Kernel()
-    //     .addBufferParameter()
-    //     .addBufferParameter();
+    ck::Kernel kernel = session.createKernel()
+        .setShaderModule(session.createShaderModule("/home/jadarve/git/VulkanPractice/shaders/comp.spv"))
+        .setFunctionName("main")
+        .addBufferParameter();
+    kernel.build();
+
 
 
     // TO RUN THE KERNEL

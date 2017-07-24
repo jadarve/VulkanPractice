@@ -1,6 +1,7 @@
 #include "ck/Session.hpp"
 
 #include <iostream>
+#include <fstream>
 #include <system_error>
 #include <vector>
 
@@ -130,6 +131,38 @@ ck::Buffer Session::createBuffer(const vk::MemoryPropertyFlags flags, const size
     return buffer;
 }
 
+
+vk::ShaderModule Session::createShaderModule(const std::string& filename) {
+
+    ifstream file(filename, std::ios::ate | std::ios::binary);
+    if(!file.is_open()) {
+        cerr << "ERROR: error reading shader file: " << filename << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    size_t fileSize = (size_t) file.tellg();
+    cout << "createShaderModule(): fileSize: " << fileSize << endl;
+
+    // read shader file
+    std::vector<char> v(fileSize);
+    file.seekg(0);
+    file.read(v.data(), fileSize);
+    file.close();
+
+
+    vk::ShaderModuleCreateInfo moduleCreateInfo = vk::ShaderModuleCreateInfo()
+        .setCodeSize(v.size())
+        .setPCode(reinterpret_cast<const uint32_t*>(v.data()));
+
+    vk::ShaderModule module = device.createShaderModule(moduleCreateInfo);
+    return module;
+}
+
+
+ck::Kernel Session::createKernel() {
+    cout << "Session::createKernel()" << endl;
+    return std::move(Kernel(device));
+}
 
 
 void Session::createInstance() {
