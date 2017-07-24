@@ -14,7 +14,7 @@ class Kernel {
 public:
     Kernel();
     Kernel(vk::Device device);
-    Kernel(const ck::Kernel& k);
+    Kernel(const ck::Kernel& k) = default;
     Kernel(Kernel&& k);
 
     ~Kernel();
@@ -25,7 +25,7 @@ public:
     Kernel& addBufferParameter();
     void build();
 
-    Kernel& operator = (const Kernel& k);
+    Kernel& operator = (const Kernel& k) = default;
     Kernel& operator = (Kernel&& k);
 
 private:

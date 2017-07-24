@@ -34,11 +34,6 @@ Kernel::Kernel(Kernel&& k) :
     k.isBuilt = false;
 }
 
-Kernel::Kernel(const ck::Kernel& k) {
-    cout << "Kernel::Kernel(const Kernel& k)" << endl;
-    *this = k;
-}
-
 
 Kernel::~Kernel() {
 
@@ -98,19 +93,5 @@ Kernel& Kernel::operator = (Kernel&& k) {
     return *this;
 }
 
-
-Kernel& Kernel::operator = (const Kernel& k) {
-
-    cout << "Kernel& Kernel::operator = (const Kernel& k)" << endl;
-
-    device = k.device;
-    module = k.module;
-    stageInfo = k.stageInfo;
-    functionName = k.functionName;
-    layout = k.layout;
-    parameterBindings = k.parameterBindings;
-    isBuilt = k.isBuilt;
-    return *this;
-}
 
 } // namespace ck
