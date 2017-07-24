@@ -7,6 +7,7 @@
 
 #include "Session.hpp"
 #include "Buffer.hpp"
+#include "Kernel.hpp"
 
 using namespace std;
 
@@ -32,7 +33,25 @@ int main() {
     // create a buffer
     ck::Buffer buffer0 = session.createBuffer(memHostVisible, 1024);
 
-    // build a compute pipeline
+    // TO BUILD A COMPUTE KERNEL
+    //
+    // * Build the shader module, bindings, stage info
+    // * Create a DescriptorSetLayout object.
+    // * Build the compute pipeline with pipeline layout.
+    // * Create a descriptor pool and descriptor set to bind buffers to the shader.
+    // * Set local and global sizes.
+    //
+    // Except for the compute pipeline part of the creation process, all the other objects
+    // are static. I could have a kernel factory.
+
+    // ck::Kernel kernel = ck::Kernel()
+    //     .addBufferParameter()
+    //     .addBufferParameter();
+
+
+    // TO RUN THE KERNEL
+    // * Create a command pool and command buffer.
+    // * Record compute pipeline dispatch
 
     std::this_thread::sleep_for (std::chrono::seconds(5));
 
