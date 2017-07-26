@@ -9,6 +9,7 @@
 #include "ck/MemoryManager.hpp"
 #include "ck/Buffer.hpp"
 #include "ck/Kernel.hpp"
+#include "ck/Node.hpp"
 
 // compute kit
 namespace ck {
@@ -31,6 +32,7 @@ public:
 
     vk::ShaderModule createShaderModule(const std::string& filename);
     ck::Kernel createKernel();
+    ck::Node createNode(ck::Kernel& k);
 
 private:
     void createInstance();

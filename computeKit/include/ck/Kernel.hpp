@@ -9,13 +9,16 @@
 namespace ck {
 
 
+// forward declarations
+class Node;
+
 class Kernel {
 
 public:
     Kernel();
-    Kernel(vk::Device device);
-    Kernel(const ck::Kernel& k) = default;
-    Kernel(Kernel&& k);
+    Kernel(vk::Device& device);
+    // Kernel(const ck::Kernel& k) = default;
+    // Kernel(Kernel&& k);
 
     ~Kernel();
 
@@ -25,8 +28,8 @@ public:
     Kernel& addBufferParameter();
     void build();
 
-    Kernel& operator = (const Kernel& k) = default;
-    Kernel& operator = (Kernel&& k);
+    // Kernel& operator = (const Kernel& k) = default;
+    // Kernel& operator = (Kernel&& k);
 
 private:
     vk::Device device;
@@ -35,8 +38,13 @@ private:
     std::string functionName;
     vk::DescriptorSetLayout layout;
     std::vector<vk::DescriptorSetLayoutBinding> parameterBindings;
-    
+
     bool isBuilt;
+    std::shared_ptr<int> referenceCounter;
+
+
+friend class Node;
+
 };
 
 } // namespace ck

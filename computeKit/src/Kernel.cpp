@@ -10,38 +10,41 @@ using namespace std;
 
 
 Kernel::Kernel() :
-    isBuilt(false) {
+    isBuilt{false} {
+    referenceCounter = std::make_shared<int>(0);
 }
 
 
-Kernel::Kernel(vk::Device device) :
+Kernel::Kernel(vk::Device& device) :
     Kernel() {
 
     this->device = device;
 }
 
-Kernel::Kernel(Kernel&& k) :
-    device(k.device),
-    module(k.module),
-    stageInfo(k.stageInfo),
-    functionName(k.functionName),
-    layout(k.layout),
-    parameterBindings(k.parameterBindings),
-    isBuilt(k.isBuilt) {
+// Kernel::Kernel(Kernel&& k) :
+//     device(k.device),
+//     module(k.module),
+//     stageInfo(k.stageInfo),
+//     functionName(k.functionName),
+//     layout(k.layout),
+//     parameterBindings(k.parameterBindings),
+//     isBuilt(k.isBuilt) {
 
-    cout << "Kernel::Kernel(Kernel&& k)" << endl;
+//     cout << "Kernel::Kernel(Kernel&& k)" << endl;
 
-    k.isBuilt = false;
-}
+//     k.isBuilt = false;
+// }
 
 
 Kernel::~Kernel() {
 
-    cout << "Kernel::~Kernel(): isBuilt: " << isBuilt << endl;
+    cout << "Kernel::~Kernel(): isBuilt: " << isBuilt <<
+        " ref count: " << referenceCounter.use_count() << endl;
 
-    if(isBuilt) {
+    if(isBuilt && referenceCounter.use_count() == 1) {
+        cout << "Kernel::~Kernel(): destroying kernel" << endl;
         device.destroyDescriptorSetLayout(layout);
-        isBuilt = false;
+        // isBuilt = false;
     }
 }
 
@@ -84,14 +87,14 @@ void Kernel::build() {
 }
 
 
-Kernel& Kernel::operator = (Kernel&& k) {
+// Kernel& Kernel::operator = (Kernel&& k) {
 
-    cout << "Kernel& Kernel::operator = (Kernel&& k)" << endl;
+//     cout << "Kernel& Kernel::operator = (Kernel&& k)" << endl;
 
-    *this = std::move(k);
-    k.isBuilt = false;
-    return *this;
-}
+//     *this = std::move(k);
+//     k.isBuilt = false;
+//     return *this;
+// }
 
 
 } // namespace ck

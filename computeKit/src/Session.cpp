@@ -164,6 +164,11 @@ ck::Kernel Session::createKernel() {
     return std::move(Kernel(device));
 }
 
+ck::Node Session::createNode(ck::Kernel& k) {
+    Node node{k};
+    return std::move(node);
+}
+
 
 void Session::createInstance() {
 

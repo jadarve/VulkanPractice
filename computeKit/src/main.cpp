@@ -8,6 +8,7 @@
 #include "ck/Session.hpp"
 #include "ck/Buffer.hpp"
 #include "ck/Kernel.hpp"
+#include "ck/Node.hpp"
 
 using namespace std;
 
@@ -44,11 +45,17 @@ int main() {
     // Except for the compute pipeline part of the creation process, all the other objects
     // are static. I could have a kernel factory.
 
+    // A Kernel is just a handle of shader code and layout information
+    // To run it, I need to create a compute Node which creates a
+    // vulkan compute pipeline.
     ck::Kernel kernel = session.createKernel()
         .setShaderModule(session.createShaderModule("/home/jadarve/git/VulkanPractice/shaders/comp.spv"))
         .setFunctionName("main")
         .addBufferParameter();
     kernel.build();
+
+    // create a compute node to run the kernel
+    ck::Node node = session.createNode(kernel);
 
 
 
@@ -56,7 +63,7 @@ int main() {
     // * Create a command pool and command buffer.
     // * Record compute pipeline dispatch
 
-    std::this_thread::sleep_for (std::chrono::seconds(5));
+    // std::this_thread::sleep_for (std::chrono::seconds(5));
 
     cout << "FINISH" << endl;
     return EXIT_SUCCESS;
