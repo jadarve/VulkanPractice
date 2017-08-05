@@ -4,6 +4,8 @@ add_executable(computeKit
     src/Session.cpp
     src/MemoryManager.cpp
     src/Buffer.cpp
+    src/Program.cpp
+    src/KernelDescriptor.cpp
     src/Kernel.cpp
     src/Node.cpp
     src/main.cpp)

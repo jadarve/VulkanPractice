@@ -158,11 +158,17 @@ vk::ShaderModule Session::createShaderModule(const std::string& filename) {
     return module;
 }
 
+ck::Program Session::createProgram(const std::string& filepath) {
 
-ck::Kernel Session::createKernel() {
-    cout << "Session::createKernel()" << endl;
-    return std::move(Kernel(device));
+    Program p {device, filepath};
+    return std::move(p);
 }
+
+
+// ck::Kernel Session::createKernel() {
+//     cout << "Session::createKernel()" << endl;
+//     return std::move(Kernel(device));
+// }
 
 ck::Node Session::createNode(ck::Kernel& k) {
     Node node{k};

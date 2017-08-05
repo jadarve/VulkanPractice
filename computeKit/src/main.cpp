@@ -7,6 +7,8 @@
 
 #include "ck/Session.hpp"
 #include "ck/Buffer.hpp"
+#include "ck/Program.hpp"
+#include "ck/KernelDescriptor.hpp"
 #include "ck/Kernel.hpp"
 #include "ck/Node.hpp"
 
@@ -48,14 +50,28 @@ int main() {
     // A Kernel is just a handle of shader code and layout information
     // To run it, I need to create a compute Node which creates a
     // vulkan compute pipeline.
-    ck::Kernel kernel = session.createKernel()
-        .setShaderModule(session.createShaderModule("/home/jadarve/git/VulkanPractice/shaders/comp.spv"))
+    // ck::Kernel kernel = session.createKernel()
+    //     .setShaderModule(session.createShaderModule("/home/jadarve/git/VulkanPractice/shaders/comp.spv"))
+    //     .setFunctionName("main")
+    //     .addBufferParameter();
+    // kernel.build();
+
+    // NOTE:
+    // * Create Program object containing the shader moduel.
+    // * KernelDescriptor specifying layout.
+    // * Create Kernel object.
+
+    // one program object to hold the SPIR-V code of many potential kernels
+    ck::Program program = session.createProgram("/home/jadarve/git/VulkanPractice/shaders/comp.spv");
+
+    ck::KernelDescriptor desc = ck::KernelDescriptor()
         .setFunctionName("main")
         .addBufferParameter();
-    kernel.build();
 
-    // create a compute node to run the kernel
-    ck::Node node = session.createNode(kernel);
+    ck::Kernel kernel = program.buildKernel(desc);
+
+    // // create a compute node to run the kernel
+    // ck::Node node = session.createNode(kernel);
 
 
 

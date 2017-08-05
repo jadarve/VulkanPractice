@@ -10,6 +10,7 @@
 #include "ck/Buffer.hpp"
 #include "ck/Kernel.hpp"
 #include "ck/Node.hpp"
+#include "ck/Program.hpp"
 
 // compute kit
 namespace ck {
@@ -30,8 +31,10 @@ public:
     ck::Buffer createBuffer(const vk::MemoryPropertyFlags flags, const size_t size);
     std::vector<vk::MemoryPropertyFlags> getMemoryProperties() const;
 
+    ck::Program createProgram(const std::string& filepath);
+
     vk::ShaderModule createShaderModule(const std::string& filename);
-    ck::Kernel createKernel();
+    // ck::Kernel createKernel();
     ck::Node createNode(ck::Kernel& k);
 
 private:
