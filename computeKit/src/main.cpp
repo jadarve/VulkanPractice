@@ -43,23 +43,6 @@ int main() {
     // * Build the compute pipeline with pipeline layout.
     // * Create a descriptor pool and descriptor set to bind buffers to the shader.
     // * Set local and global sizes.
-    //
-    // Except for the compute pipeline part of the creation process, all the other objects
-    // are static. I could have a kernel factory.
-
-    // A Kernel is just a handle of shader code and layout information
-    // To run it, I need to create a compute Node which creates a
-    // vulkan compute pipeline.
-    // ck::Kernel kernel = session.createKernel()
-    //     .setShaderModule(session.createShaderModule("/home/jadarve/git/VulkanPractice/shaders/comp.spv"))
-    //     .setFunctionName("main")
-    //     .addBufferParameter();
-    // kernel.build();
-
-    // NOTE:
-    // * Create Program object containing the shader moduel.
-    // * KernelDescriptor specifying layout.
-    // * Create Kernel object.
 
     // one program object to hold the SPIR-V code of many potential kernels
     ck::Program program = session.createProgram("/home/jadarve/git/VulkanPractice/shaders/comp.spv");
@@ -68,6 +51,7 @@ int main() {
         .setFunctionName("main")
         .addBufferParameter();
 
+    // THINK: Should the kernel manage the descriptor pool and descriptor sets?
     ck::Kernel kernel = program.buildKernel(desc);
 
     // // create a compute node to run the kernel
