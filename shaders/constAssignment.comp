@@ -9,5 +9,5 @@ layout (binding=0) buffer a2 {
 };
 
 void main() {
-    outputBuffer[gl_GlobalInvocationID.x] = 1.0;
+    outputBuffer[gl_GlobalInvocationID.x] = 10.0;
 }

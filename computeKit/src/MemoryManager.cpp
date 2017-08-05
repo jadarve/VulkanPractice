@@ -24,8 +24,8 @@ void printMemoryFlags(const vk::MemoryPropertyFlags& flags, const string& prefix
 
 
 MemoryManager::MemoryManager():
-    size(0),
-    offset(0) {
+    size {0},
+    offset {0} {
 }
 
 
@@ -33,9 +33,9 @@ MemoryManager::MemoryManager(vk::PhysicalDevice& physicalDevice,
     vk::Device& device, const vk::MemoryPropertyFlags flags,
     const size_t size) :
 
-    device(device),
-    size(size),
-    offset(0) {
+    device {device},
+    size {size},
+    offset {0} {
 
 
     vk::PhysicalDeviceMemoryProperties memProperties = physicalDevice.getMemoryProperties();
@@ -73,13 +73,22 @@ MemoryManager::MemoryManager(vk::PhysicalDevice& physicalDevice,
 
     // this throws systerm_error internally
     memory = device.allocateMemory(allocateInfo);
+
+    referenceCounter = std::make_shared<int>(0);
 }
 
 
-void MemoryManager::free() {
+MemoryManager::~MemoryManager() {
 
-    device.freeMemory(memory);
+    if(referenceCounter.use_count() == 1) {
+        std::cout << "MemoryManager::~MemoryManager()" << std::endl;
+        device.freeMemory(memory);
+    }
 }
+
+// void MemoryManager::free() {
+//     device.freeMemory(memory);
+// }
 
 
 size_t MemoryManager::getSize() const {
@@ -91,10 +100,25 @@ vk::MemoryPropertyFlags MemoryManager::getMemoryFlags() const {
 }
 
 
-void MemoryManager::bindBuffer(const ck::Buffer& buffer) {
+void MemoryManager::bindBuffer(ck::Buffer& buffer) {
 
     device.bindBufferMemory(buffer.buffer, memory, offset);
+    buffer.offset = offset;
+    buffer.memoryManager = this;
+
     offset += buffer.size;
+}
+
+
+void* MemoryManager::mapBuffer(const ck::Buffer& buffer) {
+
+    return device.mapMemory(memory, buffer.offset, buffer.size);
+}
+
+
+void MemoryManager::unmap() {
+
+    device.unmapMemory(memory);
 }
 
 } // namespace ck

@@ -16,10 +16,11 @@ Session::Session() {
 
     createInstance();
 
-    // get the first physical device available
+    // first physical device available
     physicalDevice = instance.enumeratePhysicalDevices()[0];
 
-    computeQueueFamilyIndex = getComputeFamilyQueueIndex();
+    // computeQueueFamilyIndex = getComputeFamilyQueueIndex();
+    computeQueueFamilyIndex = getFamilyQueueIndex();
     createDevice();
 }
 
@@ -33,9 +34,11 @@ Session::~Session() {
         device.destroyBuffer(buffer.buffer);
     }
 
-    for(auto memManager : memories) {
-        memManager.free();
-    }
+    // for(auto memManager : memories) {
+    //     memManager.free();
+    // }
+    // destroys all the memory managers before destroying device
+    memories.resize(0);
 
     device.destroy();
     instance.destroy();
@@ -120,43 +123,27 @@ ck::Buffer Session::createBuffer(const vk::MemoryPropertyFlags flags, const size
     buffer.size = size;
 
     // bind the buffer to a memory with the same flags
-    for(auto memManager : memories) {
-        if(containsMemoryFlags(flags, memManager.getMemoryFlags())) {
-            memManager.bindBuffer(buffer);
+
+    // NOTE: this loop correctly assigns the memory pointer to buffer
+    // since no copy operation is performed during iteration.
+    // Need to fix this...
+    for(int i = 0; i < memories.size(); ++i) {
+        if(containsMemoryFlags(flags, memories[i].getMemoryFlags())) {
+            memories[i].bindBuffer(buffer);
             break;
         }
     }
+    // for(auto memManager : memories) {
+    //     if(containsMemoryFlags(flags, memManager.getMemoryFlags())) {
+    //         memManager.bindBuffer(buffer);
+    //         break;
+    //     }
+    // }
 
     buffers.push_back(buffer);
     return buffer;
 }
 
-
-vk::ShaderModule Session::createShaderModule(const std::string& filename) {
-
-    ifstream file(filename, std::ios::ate | std::ios::binary);
-    if(!file.is_open()) {
-        cerr << "ERROR: error reading shader file: " << filename << endl;
-        exit(EXIT_FAILURE);
-    }
-
-    size_t fileSize = (size_t) file.tellg();
-    cout << "createShaderModule(): fileSize: " << fileSize << endl;
-
-    // read shader file
-    std::vector<char> v(fileSize);
-    file.seekg(0);
-    file.read(v.data(), fileSize);
-    file.close();
-
-
-    vk::ShaderModuleCreateInfo moduleCreateInfo = vk::ShaderModuleCreateInfo()
-        .setCodeSize(v.size())
-        .setPCode(reinterpret_cast<const uint32_t*>(v.data()));
-
-    vk::ShaderModule module = device.createShaderModule(moduleCreateInfo);
-    return module;
-}
 
 ck::Program Session::createProgram(const std::string& filepath) {
 
@@ -165,14 +152,44 @@ ck::Program Session::createProgram(const std::string& filepath) {
 }
 
 
-// ck::Kernel Session::createKernel() {
-//     cout << "Session::createKernel()" << endl;
-//     return std::move(Kernel(device));
-// }
-
-ck::Node Session::createNode(ck::Kernel& k) {
-    Node node{k};
+ck::Node Session::createNode(const ck::Kernel& kernel) {
+    Node node{device, kernel};
     return std::move(node);
+}
+
+
+void Session::run(const ck::Node& node) {
+
+    vk::CommandPoolCreateInfo createInfo = vk::CommandPoolCreateInfo()
+        .setQueueFamilyIndex(computeQueueFamilyIndex);
+
+    vk::CommandPool commandPool = device.createCommandPool(createInfo);
+
+    vk::CommandBufferAllocateInfo allocInfo = vk::CommandBufferAllocateInfo()
+        .setCommandPool(commandPool)
+        .setCommandBufferCount(1);
+
+    vector<vk::CommandBuffer> cmdBuffers = device.allocateCommandBuffers(allocInfo);
+    vk::CommandBuffer cmdBuffer = cmdBuffers[0];
+
+    // record command buffer
+    vk::CommandBufferBeginInfo beginInfo = vk::CommandBufferBeginInfo()
+        .setFlags(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
+
+    cmdBuffer.begin(beginInfo);
+    node.record(cmdBuffer);
+    cmdBuffer.end();
+
+    // Here I can set semaphores to wait for and 
+    // semaphores to trigger once execution is completed.
+    vk::SubmitInfo submitInfo = vk::SubmitInfo()
+        .setCommandBufferCount(1)
+        .setPCommandBuffers(&cmdBuffer);
+
+    queue.submit(1, &submitInfo, nullptr);
+    queue.waitIdle();
+
+    device.destroyCommandPool(commandPool, nullptr);
 }
 
 
@@ -210,7 +227,11 @@ void Session::createDevice() {
             .setPQueueCreateInfos(&devQueueCreateInfo);
 
     device = physicalDevice.createDevice(devCreateInfo);
+
+    std::cout << "Session::createDevice(): computeQueueFamilyIndex: " << computeQueueFamilyIndex << std::endl;
+    queue = device.getQueue(computeQueueFamilyIndex, 0);
 }
+
 
 
 uint32_t Session::getFamilyQueueIndex() {
@@ -225,7 +246,7 @@ uint32_t Session::getFamilyQueueIndex() {
             return queueIndex;
         }
 
-        queueIndex ++;
+        ++queueIndex;
     }
 
     throw system_error(std::error_code(), "No compute capable queue family found.");

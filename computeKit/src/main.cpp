@@ -34,34 +34,31 @@ int main() {
     session.allocateMemory(memHostVisible, 32*1024*1024);
 
     // create a buffer
-    ck::Buffer buffer0 = session.createBuffer(memHostVisible, 1024);
+    ck::Buffer buffer0 = session.createBuffer(memHostVisible, 64*sizeof(float));
 
-    // TO BUILD A COMPUTE KERNEL
-    //
-    // * Build the shader module, bindings, stage info
-    // * Create a DescriptorSetLayout object.
-    // * Build the compute pipeline with pipeline layout.
-    // * Create a descriptor pool and descriptor set to bind buffers to the shader.
-    // * Set local and global sizes.
-
-    // one program object to hold the SPIR-V code of many potential kernels
+    // one program object can hold the SPIR-V code of many potential kernels
     ck::Program program = session.createProgram("/home/jadarve/git/VulkanPractice/shaders/comp.spv");
 
     ck::KernelDescriptor desc = ck::KernelDescriptor()
         .setFunctionName("main")
         .addBufferParameter();
 
-    // THINK: Should the kernel manage the descriptor pool and descriptor sets?
     ck::Kernel kernel = program.buildKernel(desc);
 
-    // // create a compute node to run the kernel
-    // ck::Node node = session.createNode(kernel);
+    // create a compute node to run the kernel
+    ck::Node node = session.createNode(kernel);
+    node.bind(0, buffer0);
 
+    session.run(node);
 
+    // read back results
+    float* ptr = static_cast<float*>(buffer0.map());
+    
+    for(int i = 0; i < 64; ++i) {
+        cout << i << ": " << ptr[i] << endl;
+    }
 
-    // TO RUN THE KERNEL
-    // * Create a command pool and command buffer.
-    // * Record compute pipeline dispatch
+    buffer0.unmap();
 
     // std::this_thread::sleep_for (std::chrono::seconds(5));
 

@@ -33,23 +33,28 @@ public:
 
     ck::Program createProgram(const std::string& filepath);
 
-    vk::ShaderModule createShaderModule(const std::string& filename);
-    // ck::Kernel createKernel();
-    ck::Node createNode(ck::Kernel& k);
+    // vk::ShaderModule createShaderModule(const std::string& filename);
+    ck::Node createNode(const ck::Kernel& kernel);
+
+    void run(const ck::Node& node);
 
 private:
     void createInstance();
     void createDevice();
+    void initQueue();
     uint32_t getFamilyQueueIndex();
 
 private:
     vk::Instance instance;
     vk::PhysicalDevice physicalDevice;
     vk::Device device;
+    vk::Queue queue;
     uint32_t computeQueueFamilyIndex;
 
     std::vector<ck::MemoryManager> memories;
     std::vector<ck::Buffer> buffers;
+
+
 
 };
 

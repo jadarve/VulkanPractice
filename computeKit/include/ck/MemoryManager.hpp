@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
 #include <vulkan/vulkan.hpp>
 
@@ -25,13 +26,16 @@ public:
                     const vk::MemoryPropertyFlags flags,
                     const size_t size);
 
+    ~MemoryManager();
 
 public:
-    void free();
+    // void free();
     size_t getSize() const;
     vk::MemoryPropertyFlags getMemoryFlags() const;
 
-    void bindBuffer(const ck::Buffer& buffer);
+    void bindBuffer(ck::Buffer& buffer);
+    void* mapBuffer(const ck::Buffer& buffer);
+    void unmap();
 
 private:
     vk::Device device;
@@ -39,6 +43,8 @@ private:
     vk::MemoryPropertyFlags memoryFlags;
     size_t size;
     size_t offset;
+
+    std::shared_ptr<int> referenceCounter;
 };
 
 
