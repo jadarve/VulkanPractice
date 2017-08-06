@@ -60,29 +60,38 @@ void Node::record(vk::CommandBuffer& commandBufer) const {
 
 void Node::init(const ck::NodeDescriptor& desc) {
 
-    // NOTE: Specialization constants are read only during pipeline construction
-    // and not during running.
+    /////////////////////////////////////////////
+    // Specialization constants
+    /////////////////////////////////////////////
 
-    uint32_t local_x = 60;
+    const size_t size = sizeof(uint32_t);
     vector<vk::SpecializationMapEntry> specializationMapEntries {
-        {1, 0, sizeof(uint32_t)}
+        {1, 0*size, size},
+        {2, 1*size, size},
+        {3, 2*size, size}
     };
+
+    std::vector<uint32_t> localGroup {desc.getLocalX(), desc.getLocalY(), desc.getLocalZ()};
 
     vk::SpecializationInfo specializationInfo = vk::SpecializationInfo()
         .setMapEntryCount(specializationMapEntries.size())
         .setPMapEntries(specializationMapEntries.data())
-        .setDataSize(sizeof(uint32_t))
-        .setPData(&local_x);
+        .setDataSize(localGroup.size()*sizeof(uint32_t))
+        .setPData(localGroup.data());
 
-
+    /////////////////////////////////////////////
+    // Pipeline stage info
+    /////////////////////////////////////////////
     stageInfo = vk::PipelineShaderStageCreateInfo()
         .setStage(vk::ShaderStageFlagBits::eCompute)
         .setModule(desc.getProgram().getShaderModule())
         .setPName(desc.getFunctionName().c_str())
-        // .setPSpecializationInfo(nullptr);
         .setPSpecializationInfo(&specializationInfo);
 
 
+    /////////////////////////////////////////////
+    // Descriptor pool and descriptor set
+    /////////////////////////////////////////////
     std::vector<vk::DescriptorSetLayoutBinding> parameterBindings {desc.getParameterBindings()};
     vk::DescriptorSetLayoutCreateInfo descLayoutInfo = vk::DescriptorSetLayoutCreateInfo()
         .setBindingCount(parameterBindings.size())
@@ -96,10 +105,6 @@ void Node::init(const ck::NodeDescriptor& desc) {
         .setPoolSizeCount(descriptorPoolSizes.size())
         .setPPoolSizes(descriptorPoolSizes.data());
 
-
-    /////////////////////////////////////////////
-    // Descriptor pool and descriptor set
-    /////////////////////////////////////////////
     device.createDescriptorPool(&descriptorPoolCreateInfo, nullptr, &descriptorPool);
 
     // only one descriptor set for this Node object

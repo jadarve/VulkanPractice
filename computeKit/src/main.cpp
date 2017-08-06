@@ -44,6 +44,7 @@ int main() {
     ck::NodeDescriptor desc = ck::NodeDescriptor()
         .setProgram(program)
         .setFunctionName("main")
+        .setLocalX(60)
         .addBufferParameter();
 
     ck::Node node = session.createNode(desc);

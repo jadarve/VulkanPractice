@@ -3,8 +3,14 @@
 // layout(constant_id = 0) const int x_local = 64;
 // layout(constant_id = 2) const float value = 5.0;
 
-layout(local_size_x=32, local_size_y=1, local_size_z=1) in;
-layout(local_size_x_id = 1) in;
+// layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+// layout(local_size_x_id = 1) in;
+
+layout (
+    local_size_x_id = 1, local_size_x = 1,
+    local_size_y_id = 2, local_size_y = 1,
+    local_size_z_id = 3, local_size_z = 1
+) in;
 
 layout (binding=0) buffer a2 {
     float outputBuffer[];

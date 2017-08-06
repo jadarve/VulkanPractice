@@ -11,10 +11,6 @@
 // compute kit
 namespace ck {
 
-// forward declarations
-// class Node;
-// class Program;
-
 
 class NodeDescriptor {
 
@@ -23,12 +19,17 @@ public:
     NodeDescriptor& setFunctionName(const std::string& name);
     NodeDescriptor& addBufferParameter();
 
-    // TODO: specialization constants
+    NodeDescriptor& setLocalX(const uint32_t x);
+    NodeDescriptor& setLocalY(const uint32_t y);
+    NodeDescriptor& setLocalZ(const uint32_t z);
 
     std::vector<vk::DescriptorPoolSize> getDescriptorPoolSizes() const;
 
     std::string getFunctionName() const;
     ck::Program getProgram() const;
+    uint32_t getLocalX() const;
+    uint32_t getLocalY() const;
+    uint32_t getLocalZ() const;
     std::vector<vk::DescriptorSetLayoutBinding> getParameterBindings() const;
 
 
@@ -36,6 +37,9 @@ private:
     ck::Program program;
     std::string functionName;
     std::vector<vk::DescriptorSetLayoutBinding> parameterBindings;
+
+    // local work group
+    std::vector<uint32_t> localGroup {1, 1, 1};
 
     // counters for layout parameters
     uint32_t bufferCount {0};
