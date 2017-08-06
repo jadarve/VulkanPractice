@@ -8,7 +8,8 @@
 
 #include "ck/MemoryManager.hpp"
 #include "ck/Buffer.hpp"
-#include "ck/Kernel.hpp"
+// #include "ck/Kernel.hpp"
+#include "ck/NodeDescriptor.hpp"
 #include "ck/Node.hpp"
 #include "ck/Program.hpp"
 
@@ -32,9 +33,7 @@ public:
     std::vector<vk::MemoryPropertyFlags> getMemoryProperties() const;
 
     ck::Program createProgram(const std::string& filepath);
-
-    // vk::ShaderModule createShaderModule(const std::string& filename);
-    ck::Node createNode(const ck::Kernel& kernel);
+    ck::Node createNode(const ck::NodeDescriptor& desc);
 
     void run(const ck::Node& node);
 
@@ -53,9 +52,7 @@ private:
 
     std::vector<ck::MemoryManager> memories;
     std::vector<ck::Buffer> buffers;
-
-
-
+    
 };
 
 } // namespace ck

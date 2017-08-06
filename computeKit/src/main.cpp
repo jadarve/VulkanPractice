@@ -8,8 +8,9 @@
 #include "ck/Session.hpp"
 #include "ck/Buffer.hpp"
 #include "ck/Program.hpp"
-#include "ck/KernelDescriptor.hpp"
-#include "ck/Kernel.hpp"
+// #include "ck/KernelDescriptor.hpp"
+// #include "ck/Kernel.hpp"
+#include "ck/NodeDescriptor.hpp"
 #include "ck/Node.hpp"
 
 using namespace std;
@@ -39,14 +40,13 @@ int main() {
     // one program object can hold the SPIR-V code of many potential kernels
     ck::Program program = session.createProgram("/home/jadarve/git/VulkanPractice/shaders/comp.spv");
 
-    ck::KernelDescriptor desc = ck::KernelDescriptor()
+    // TODO: add specialization constants    
+    ck::NodeDescriptor desc = ck::NodeDescriptor()
+        .setProgram(program)
         .setFunctionName("main")
         .addBufferParameter();
 
-    ck::Kernel kernel = program.buildKernel(desc);
-
-    // create a compute node to run the kernel
-    ck::Node node = session.createNode(kernel);
+    ck::Node node = session.createNode(desc);
     node.bind(0, buffer0);
 
     session.run(node);

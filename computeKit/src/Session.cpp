@@ -152,8 +152,9 @@ ck::Program Session::createProgram(const std::string& filepath) {
 }
 
 
-ck::Node Session::createNode(const ck::Kernel& kernel) {
-    Node node{device, kernel};
+ck::Node Session::createNode(const ck::NodeDescriptor& desc) {
+
+    Node node{device, desc};
     return std::move(node);
 }
 

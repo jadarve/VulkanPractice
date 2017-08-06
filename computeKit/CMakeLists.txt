@@ -5,8 +5,7 @@ add_executable(computeKit
     src/MemoryManager.cpp
     src/Buffer.cpp
     src/Program.cpp
-    src/KernelDescriptor.cpp
-    src/Kernel.cpp
+    src/NodeDescriptor.cpp
     src/Node.cpp
     src/main.cpp)
 

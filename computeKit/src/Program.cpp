@@ -44,10 +44,9 @@ Program::~Program() {
 }
 
 
-ck::Kernel Program::buildKernel(const KernelDescriptor& desc) {
-
-    Kernel k{*this, desc};
-    return k;
+vk::ShaderModule Program::getShaderModule() const {
+    return module;
 }
+
 
 } // namespace ck

@@ -1,10 +1,6 @@
 #ifndef PROGRAM_HPP_
 #define PROGRAM_HPP_
 
-
-#include "ck/KernelDescriptor.hpp"
-#include "ck/Kernel.hpp"
-
 #include <string>
 
 #include <vulkan/vulkan.hpp>
@@ -20,7 +16,7 @@ public:
     Program(vk::Device& device, const std::string& filepath);
     ~Program();
 
-    ck::Kernel buildKernel(const KernelDescriptor& desc);
+    vk::ShaderModule getShaderModule() const;
 
 private:
     vk::Device device;
@@ -28,7 +24,6 @@ private:
 
     std::shared_ptr<int> referenceCounter;
 
-friend class ck::Kernel;
 };
 
 } // namespace ck
